@@ -2,7 +2,7 @@
 
 Computational evidence for the smoothed Perron bound on two-point Liouville correlations, supporting the paper sequence:
 
-- *Polynomial correlations of the Liouville function with an application to an additive problem* ([Zenodo DOI: 10.5281/zenodo.19474787](https://doi.org/10.5281/zenodo.19474787))
+- *A smoothed Perron bound for two-point Liouville correlations via Sobolev regularity at σ = 1* ([https://zenodo.org/records/19560540?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6ImQwMGJkNmMwLWNjOTctNDUyZi1hYzJjLWVkZWUxNzk4YjQyNyIsImRhdGEiOnt9LCJyYW5kb20iOiI2ZDNiNzM5NzRhYjMyNTIwZmExZTU0NzNhOTlhNjRhNiJ9.mTROAgNwmwNoOxQGPOT_HS__yu-Y8Uw6YnUzEyE1VZB0qyfQBTvq7oD-fntzachFYx7N5idVVgid8K6G1pT7EA])
 
 ## What this verifies
 
