@@ -72,7 +72,7 @@ def main():
     ax.set_xlabel('$t$', fontsize=14)
     ax.set_ylabel("$|G_a'(1+it)|$", fontsize=14)
     ax.set_title("Boundedness of $G_a'(1+it)$ at $\\sigma=1$\n"
-                 u"(constant \u21d2 $H^2$ Sobolev regularity confirmed)",
+                 u"(constant \u21d2 $W^{2,2}$ Sobolev regularity confirmed)",
                  fontsize=13)
     ax.legend(loc='lower left', fontsize=10)
     ax.set_ylim(bottom=1.0, top=1.45)
@@ -146,7 +146,7 @@ def main():
     print(f"  Saved: {p3}")
     plt.close(fig)
 
-    print("\nAll three plots regenerated with corrected titles.")
+    print("\nAll three plots regenerated with corrected titles (W^{2,2}).")
 
 
 if __name__ == "__main__":
