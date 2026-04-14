@@ -87,7 +87,6 @@ Theodore Deligiannis, Multiscale Lab, University of Nebraska at Omaha
 If you use this code, please cite:
 
 ```
-Deligiannis, T. (2026). Polynomial correlations of the Liouville function
-with an application to an additive problem. Zenodo.
-https://doi.org/10.5281/zenodo.19474787
+Deligiannis, T. (2026). A smoothed Perron bound for two-point Liouville correlations via Sobolev regularity at σ = 1. Zenodo. https://doi.org/10.5281/zenodo.19560540
+
 ```
