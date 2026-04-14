@@ -2,9 +2,7 @@
 
 Computational experiments accompanying the paper:
 
-> T. Deligiannis, **"A reduction of binary Goldbach to a four-point Chowla bound
-> via the polynomial squaring identity"** (2026).
-> DOI: [10.5281/zenodo.19474787](https://doi.org/10.5281/zenodo.19474787)
+Deligiannis, T. (2026). Polynomial correlations of the Liouville function and a smoothed Perron bound via Sobolev regularity at σ = 1. Zenodo. https://doi.org/10.5281/zenodo.19572245
 
 Five independent experiments confirm every quantitative prediction of the paper
 across four decades of computation ($X$ up to $10^{10}$, $N$ up to $4 \times 10^{11}$).
