@@ -1,0 +1,19 @@
+# Compiled binaries
+four_point/c4_covariance
+turan_kubilius/tk_two_prime
+wavelet/goldbach_wavelet
+test_c4
+test_tk
+
+# Python
+__pycache__/
+*.pyc
+
+# Results logs (generated locally)
+results_exp*.txt
+*.csv
+
+# Editor
+*.swp
+*~
+.vscode/

@@ -1,92 +1,157 @@
-# Goldbach–Perron Computational Verification
+# Goldbach–Perron Computations
 
-Computational evidence for the smoothed Perron bound on two-point Liouville correlations, supporting the paper sequence:
+Computational experiments accompanying the paper:
 
-- *A smoothed Perron bound for two-point Liouville correlations via Sobolev regularity at σ = 1* ([https://zenodo.org/records/19560540?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6ImQwMGJkNmMwLWNjOTctNDUyZi1hYzJjLWVkZWUxNzk4YjQyNyIsImRhdGEiOnt9LCJyYW5kb20iOiI2ZDNiNzM5NzRhYjMyNTIwZmExZTU0NzNhOTlhNjRhNiJ9.mTROAgNwmwNoOxQGPOT_HS__yu-Y8Uw6YnUzEyE1VZB0qyfQBTvq7oD-fntzachFYx7N5idVVgid8K6G1pT7EA])
+> T. Deligiannis, **"A reduction of binary Goldbach to a four-point Chowla bound
+> via the polynomial squaring identity"** (2026).
+> DOI: [10.5281/zenodo.19474787](https://doi.org/10.5281/zenodo.19474787)
 
-## What this verifies
+Five independent experiments confirm every quantitative prediction of the paper
+across four decades of computation ($X$ up to $10^{10}$, $N$ up to $4 \times 10^{11}$).
 
-The smoothed Perron argument claims that the two-point Liouville correlation satisfies S_Φ(M) = O(M/(log M)²) unconditionally, using three inputs: Tao's continuity theorem, the Montgomery–Vaughan L² mean-value theorem, and the Sobolev embedding H² ↪ C¹ in one dimension. The code verifies every quantitative prediction across four decades (M = 10⁷, 10⁸, 10⁹, 10¹⁰):
+## Experiments at a glance
 
-| Quantity | Prediction | Observed |
+| # | Experiment | Paper §  | Language | Key observable | Result |
+|---|-----------|----------|----------|----------------|--------|
+| 1 | Four-point covariance splitting | §A.1 | C/OpenMP | $\|C_4(k)\| \lesssim (\log X)^{-\alpha}$ | $\alpha \approx 8\text{--}18$ (threshold: $\alpha \geq 2$) |
+| 2 | Turán–Kubilius two-prime interactions | §A.2 | C/OpenMP | $\|A_{7,p}\|$ | $1.39 \times 10^{-8}$, 1600× below $X^{-1/2}$ |
+| 3 | $W^{2,2}$ Sobolev regularity | §A.3 | Python | $\|G_a'(1+it)\|$ | Converges to 1.2642 (bounded) |
+| 4 | Wavelet verification | §A.4 | C/OpenMP | $\max\|C_j\|/2^j \leq 1/j^2$ | Holds for all $j \geq 23$ |
+| 5 | Bulk cancellation & exponential sums | §A.5 | Python | Bulk $\alpha$, $\|\hat{g}\|/X$ | $\alpha = 4.63 \pm 0.78$ |
+
+## Repository structure
+
+```
+├── README.md                          ← this file
+├── LICENSE                            ← MIT
+├── Makefile                           ← build and run all experiments
+├── common/
+│   └── liouville_sieve.py             ← shared segmented Liouville sieve
+├── four_point/
+│   ├── c4_covariance.c                ← Experiment 1 (C/OpenMP)
+│   └── README.md
+├── turan_kubilius/
+│   ├── tk_two_prime.c                 ← Experiment 2 (C/OpenMP)
+│   └── README.md
+├── perron/
+│   ├── goldbach_perron_computation.py ← Experiment 3
+│   ├── replot.py                      ← regenerate plots from saved data
+│   ├── results/perron_data.npz        ← saved numerical results
+│   ├── plots/                         ← publication-quality PNG figures
+│   └── README.md
+├── wavelet/
+│   ├── goldbach_wavelet.c             ← Experiment 4 (C/OpenMP, primary)
+│   ├── wavelet_verification.py        ← Experiment 4 (Python, small-scale)
+│   └── README.md
+└── exponential_sums/
+    ├── bulk_cancellation.py           ← Experiment 5a: bulk Σλ(n)λ(n+h)
+    ├── kmt_variance.py                ← Experiment 5b: KMT variance
+    ├── multiscale_expsums.py          ← Experiment 5c: |ĝ(a/q)|/X decay
+    └── README.md
+```
+
+## Quick start
+
+### Prerequisites
+
+```bash
+# C programs (Linux)
+sudo apt install build-essential       # gcc
+# Python
+pip install numpy matplotlib scipy     # Python 3.8+
+```
+
+### Compile everything
+
+```bash
+make all
+```
+
+### Smoke tests (~2 minutes, any machine)
+
+```bash
+make test
+```
+
+This runs each C program at small scale ($X = 5 \times 10^7$) and the
+Python experiments in test mode.
+
+### Individual quick tests
+
+```bash
+# Experiment 1: C4 covariance (X=50M, ~30s)
+gcc -O3 -march=native -fopenmp -DX_MAX=50000000ULL \
+    -o test_c4 four_point/c4_covariance.c -lm
+OMP_NUM_THREADS=4 ./test_c4
+
+# Experiment 2: TK interactions (X=50M, ~30s)
+gcc -O3 -march=native -fopenmp -DX_MAX=50000000ULL \
+    -o test_tk turan_kubilius/tk_two_prime.c -lm
+OMP_NUM_THREADS=4 ./test_tk
+
+# Experiment 3: Perron regularity (M=10^7, ~1 min)
+cd perron && python3 goldbach_perron_computation.py --mmax 10000000 --cores 4
+
+# Experiment 4: Wavelet (N=1B, ~1 min)
+cd wavelet && ./goldbach_wavelet 1
+
+# Experiment 5c: Exponential sums (X=10^5, ~5s)
+cd exponential_sums && python3 multiscale_expsums.py --test
+```
+
+### Production runs (64-core workstation)
+
+```bash
+make run-exp1    # Exp 1: C4, X=10^10, ~8h, 11 GB
+make run-exp2    # Exp 2: TK, X=2×10^9, ~4h, 4 GB
+make run-exp3    # Exp 3: Perron, M=10^10, ~2h, 30 GB
+make run-exp4    # Exp 4: Wavelet, N=10B, ~5 min, 10 GB
+make run-exp5    # Exp 5c: Expsums, X=10^8, ~15 min, 2 GB
+```
+
+## Paper cross-reference
+
+| Paper table/figure | Experiment | Script |
 |---|---|---|
-| \|G_a'(1+it)\| | Bounded (constant in t) | 1.264, stable to 6 digits |
-| \|H(t)\|/t | Converges to \|G_a'(1)\| (Lipschitz) | 1.2642, stable from t = 0.002 to 10⁻⁵ |
-| \|S/M\| · (log M)² | Below 1 (Goldbach threshold) | 0.009 at M = 10¹⁰ (114× below) |
-| G_a(1) | Finite nonzero constant | 0.526, stable to 3 digits |
+| Table A.1: $\|C_4(k)\|$ vs $(\log X)^{-2}$ | 1 | `four_point/c4_covariance.c` |
+| Table A.2: $\|A_{7,p}\|$ benchmarks | 2 | `turan_kubilius/tk_two_prime.c` |
+| Table A.3: $\|G_a'(1)\|$ convergence | 3 | `perron/goldbach_perron_computation.py` |
+| Table A.4: Lipschitz test | 3 | `perron/goldbach_perron_computation.py` |
+| Table A.5: Cesàro ratio | 3 | `perron/goldbach_perron_computation.py` |
+| Table A.6: Wavelet scales | 4 | `wavelet/goldbach_wavelet.c` |
+| Table A.7: Multi-scale $\|\hat{g}\|/X$ | 5c | `exponential_sums/multiscale_expsums.py` |
+| Table A.8: Summary of all tests | all | — |
+| Figure 1: $\|G_a'(1+it)\|$ | 3 | `perron/plots/plot1_Ga_prime_bounded.png` |
+| Figure 2: Lipschitz test | 3 | `perron/plots/plot2_lipschitz_test.png` |
+| Figure 3: Cesàro ratio | 3 | `perron/plots/plot3_cesaro_ratio.png` |
+| Figure 5: KMT normalized variance | 5b | `exponential_sums/kmt_variance.py` |
 
-## Files
+## Hardware requirements
 
-| File | Description |
-|---|---|
-| `goldbach_perron_computation.py` | Main computation: segmented Liouville sieve, parallel evaluation of G_a(1+it) and G_a'(1+it) at 15 values of t across multiple decades of M, with publication-quality PNG plots |
-| `replot.py` | Regenerate plots from saved data without rerunning the sieve |
-| `perron_data.npz` | Saved numerical results from the 4-decade run (load with `numpy`) |
-| `plot1_Ga_prime_bounded.png` | Boundedness of \|G_a'(1+it)\| at σ = 1 |
-| `plot2_lipschitz_test.png` | Lipschitz test: \|H(t)\|/t → \|G_a'(1)\| |
-| `plot3_cesaro_ratio.png` | Cesàro ratio vs Goldbach threshold |
+All full-scale computations were performed on a single workstation:
+**64-core CPU, 540 GB RAM, Pop!\_OS Linux**.
 
-## Usage
+| Experiment | X/N | RAM | Cores | Time |
+|---|---|---|---|---|
+| 1: C4 covariance | $10^{10}$ | 11 GB | 64 | ~8h |
+| 2: TK interactions | $2 \times 10^9$ | 4 GB | 64 | ~4h |
+| 3: Perron | $10^{10}$ | 30 GB | 64 | ~2h |
+| 4: Wavelet | $4 \times 10^{11}$ | 400 GB | 64 | ~4h |
+| 5a: Bulk cancellation | $10^{10}$ | 80 GB/worker | 6 | ~2h |
+| 5b: KMT variance | $10^8$ | 2 GB | 24 | ~20 min |
+| 5c: Exponential sums | $10^8$ | 2 GB | 1 | ~15 min |
 
-### Requirements
+All scripts have test modes that run on any machine (4+ cores, 4+ GB RAM)
+in under 30 seconds.
 
-```
-pip install numpy matplotlib
-```
+## Known numerical artefact
 
-### Quick test (M = 10⁷, ~10 seconds)
-
-```bash
-python3 goldbach_perron_computation.py --mmax 10000000 --cores 4 --seg 500000 --outdir results
-```
-
-### Full 4-decade run (M = 10¹⁰, ~45 minutes on 64 cores)
-
-```bash
-python3 goldbach_perron_computation.py --mmax 10000000000 --cores 64 --seg 5000000 --outdir results
-```
-
-### Regenerate plots from saved data
-
-```bash
-python3 replot.py
-```
-
-### Arguments
-
-| Flag | Default | Description |
-|---|---|---|
-| `--mmax` | 10⁹ | Maximum value of M |
-| `--cores` | 64 | Number of CPU cores for parallel sieve |
-| `--seg` | 5×10⁶ | Segment size in m-values per worker |
-| `--outdir` | `.` | Output directory for plots and data |
-
-## Method
-
-The code computes g_a(m) = λ(30m+1)·λ(30m+7) for m ≤ M using a segmented sieve of Ω(n) mod 2 (the Liouville function). For each M, it evaluates:
-
-- G_a(1+it; M) = Σ_{m≤M} g_a(m) / m^{1+it}
-- G_a'(1+it; M) = -Σ_{m≤M} g_a(m) (log m) / m^{1+it}
-
-at 15 values of t from 0.5 down to 10⁻⁵. The sieve is parallelized across segments using Python's `multiprocessing.Pool`.
-
-## Hardware
-
-The full 4-decade run was performed on a 64-core workstation with 540 GB RAM running Pop!_OS Linux. The computation at M = 10¹⁰ (corresponding to n ≤ 3×10¹¹) required approximately 45 minutes.
+At $X = 10^{10}$, all seven shifts simultaneously exhibit $\mu_1 \approx -0.00280$
+(coefficient of variation 2.4%).  This is a genuine long-range Liouville oscillation
+— a Chebyshev-type bias associated with zeros of $\zeta$ near the real axis —
+confirmed not to be a computational artefact.  All exponent regressions use
+$X \leq 3 \times 10^9$ as the reliable asymptotic range.
 
 ## License
 
-MIT
-
-## Author
-
-Theodore Deligiannis, Multiscale Lab, University of Nebraska at Omaha
-
-## Citation
-
-If you use this code, please cite:
-
-```
-Deligiannis, T. (2026). A smoothed Perron bound for two-point Liouville correlations via Sobolev regularity at σ = 1. Zenodo. https://doi.org/10.5281/zenodo.19560540
-
-```
+MIT — see [LICENSE](LICENSE).

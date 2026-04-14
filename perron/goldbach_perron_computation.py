@@ -156,7 +156,7 @@ def make_plots(all_results, t_values, output_dir="."):
     ax.set_xlabel('$t$', fontsize=14)
     ax.set_ylabel("$|G_a'(1+it)|$", fontsize=14)
     ax.set_title("Boundedness of $G_a'(1+it)$ at $\\sigma=1$\n"
-                  "(constant ⇒ $H^2$ Sobolev regularity confirmed)",
+                  "(constant $\\Rightarrow$ $H^2$ Sobolev regularity confirmed)",
                  fontsize=13)
     ax.legend(loc='lower left', fontsize=10)
     ax.set_ylim(bottom=1.0, top=1.45)
@@ -183,8 +183,8 @@ def make_plots(all_results, t_values, output_dir="."):
     ax.set_xlabel('$t$', fontsize=14)
     ax.set_ylabel("$|H(t)|/t = |G_a(1+it) - G_a(1)|\\, /\\, t$", fontsize=14)
     ax.set_title("Lipschitz test: $|H(t)|/t \\to |G_a'(1)|$\n"
-                  "(convergence ⇒ Lipschitz; "
-                  "divergence ⇒ only Hölder-$1/2$)",
+                  "(convergence $\\Rightarrow$ Lipschitz; "
+                  "divergence $\\Rightarrow$ only H\\\"{o}lder-$1/2$)",
                  fontsize=13)
     ax.legend(loc='upper right', fontsize=10)
     ax.set_ylim(bottom=0.8, top=1.5)
@@ -220,8 +220,8 @@ def make_plots(all_results, t_values, output_dir="."):
 
     ax.set_xlabel('$M$', fontsize=14)
     ax.set_ylabel("$|S(M)/M| \\cdot (\\log M)^2$", fontsize=14)
-    ax.set_title("Cesàro ratio vs Goldbach threshold\n"
-                  "(below red line ⇒ $c \\geq 2$)",
+    ax.set_title("Ces\\`aro ratio vs Goldbach threshold\n"
+                  "(below red line $\\Rightarrow$ $c \\geq 2$)",
                  fontsize=13)
     ax.legend(loc='upper right', fontsize=11)
     ax.set_ylim(bottom=0, top=max(0.3, max(ratio_arr) * 1.5))
